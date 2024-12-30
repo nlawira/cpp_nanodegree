@@ -14,23 +14,24 @@ using std::vector;
 Process::Process(int pid) : 
 	pid_(pid), 
 	user_(LinuxParser::User(pid)), 
-	comm_(LinuxParser::Command(pid)),
-	cpuutil_(CpuUtilization()) {};
+	comm_(LinuxParser::Command(pid)) {
+      long sUpTime = LinuxParser::UpTime();
+      long pTotalTime = LinuxParser::ActiveJiffies(pid_);
+      long pUpTime = LinuxParser::UpTime(pid_);
+
+      long TotalElapsedTime = sUpTime - pUpTime;
+      try {
+        cpuutil_ = ((pTotalTime / sysconf(_SC_CLK_TCK)) / TotalElapsedTime);
+      } catch (...) {
+        cpuutil_ = 0;
+      }
+    }
 
 // TODO: Return this process's ID
 int Process::Pid() { return pid_; }
 
 // TODO: Return this process's CPU utilization
-float Process::CpuUtilization() {
-  long sUpTime = LinuxParser::UpTime();
-  long pTotalTime = LinuxParser::ActiveJiffies(pid_);
-  long pUpTime = LinuxParser::UpTime(pid_);
-  
-  long TotalElapsedTime = sUpTime - pUpTime;
-  float cpuUsage = 100.0 * ((pTotalTime / sysconf(_SC_CLK_TCK)) / TotalElapsedTime);
-  
-  return cpuUsage;
-}
+float Process::CpuUtilization() { return cpuutil_; }
 
 // TODO: Return the command that generated this process
 string Process::Command() { return comm_; }
