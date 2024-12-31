@@ -161,7 +161,7 @@ vector<string> LinuxParser::CpuUtilization() {
     std::istringstream linestream(line);
     linestream >> key;
     while (linestream >> value) {
-      cpuUsage.push_back(value);
+      cpuUsage.emplace_back(value);
     }
   }
   return cpuUsage;
@@ -229,7 +229,7 @@ string LinuxParser::Ram(int pid) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> ram) {
-        if (key == "VmSize") {
+        if (key == "VmRSS") {
           ram_l = stol(ram) / 1000;
           return to_string(ram_l);
         }
