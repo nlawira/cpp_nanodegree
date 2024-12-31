@@ -20,10 +20,10 @@ Process::Process(int pid) :
       long pUpTime = LinuxParser::UpTime(pid_);
 
       long TotalElapsedTime = sUpTime - pUpTime;
-      try {
-        cpuutil_ = ((pTotalTime / sysconf(_SC_CLK_TCK)) / TotalElapsedTime);
-      } catch (...) {
-        cpuutil_ = 0;
+      if (TotalElapsedTime > 0) {
+        cpuutil_ = static_cast<float>(pTotalTime / sysconf(_SC_CLK_TCK)) / TotalElapsedTime;
+      } else {
+        cpuutil_ = 0.0;
       }
     }
 
