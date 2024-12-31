@@ -35,8 +35,8 @@ float Process::CpuUtilization() { return cpuutil_; }
 
 // TODO: Return the command that generated this process
 string Process::Command() {
-	if (comm_.size()) > 50 {
-		return comm_[0:46] + "...";
+	if (comm_.size() > 50) {
+		return comm_.substr(0,47) + "...";
 	} else {
 	return comm_;
 	}

@@ -30,6 +30,7 @@ string LinuxParser::OperatingSystem() {
         }
       }
     }
+    filestream.close();
   }
   return value;
 }
@@ -72,7 +73,7 @@ float LinuxParser::MemoryUtilization() {
   string key, unit, line;
   float memory = 0.0, freeMemory, usedMemory, totalMemory;
   std::ifstream filestream(kProcDirectory + kMeminfoFilename);
-   if (filestream.is_open()) {
+  if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
@@ -85,7 +86,8 @@ float LinuxParser::MemoryUtilization() {
         }
       }
     }
-   }
+    filestream.close();
+  }
   try {
     usedMemory = (totalMemory - freeMemory) / totalMemory;
     return usedMemory;
@@ -99,11 +101,12 @@ long LinuxParser::UpTime() {
   long uptime = 0.0;
   string line;
   std::ifstream filestream(kProcDirectory + kUptimeFilename);
-   if (filestream.is_open()) {
-     std::getline(filestream, line);
-     std::istringstream linestream(line);
-     linestream >> uptime;
-   }
+  if (filestream.is_open()) {
+    std::getline(filestream, line);
+    std::istringstream linestream(line);
+    linestream >> uptime;
+    filestream.close();
+  }
   return uptime;
 }
 
@@ -130,6 +133,7 @@ long LinuxParser::ActiveJiffies(int pid) {
     while (linestream >> value) {
       v.push_back(value);
     }
+    filestream.close();
   }
   activeJiffies = stol(v[13]) + stol(v[14]) + stol(v[15]) + stol(v[16]);
   return activeJiffies;
@@ -163,6 +167,7 @@ vector<string> LinuxParser::CpuUtilization() {
     while (linestream >> value) {
       cpuUsage.emplace_back(value);
     }
+    filestream.close();
   }
   return cpuUsage;
 }
@@ -172,7 +177,7 @@ int LinuxParser::TotalProcesses() {
   int totalProcesses = -1;
   string key, line;
   std::ifstream filestream(kProcDirectory + kStatFilename);
-   if (filestream.is_open()) {
+  if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
@@ -182,7 +187,8 @@ int LinuxParser::TotalProcesses() {
         }
       }
     }
-   }
+    filestream.close();
+  }
   return totalProcesses;
 }
 
@@ -191,7 +197,7 @@ int LinuxParser::RunningProcesses() {
   int runningProcesses = -1;
   string key, line;
   std::ifstream filestream(kProcDirectory + kStatFilename);
-   if (filestream.is_open()) {
+  if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
@@ -201,7 +207,8 @@ int LinuxParser::RunningProcesses() {
         }
       }
     }
-   }
+    filestream.close();
+  }
   return runningProcesses;
 }
 
@@ -214,6 +221,7 @@ string LinuxParser::Command(int pid) {
       if (std::getline(filestream, line)) {
         comm = line;
       }
+    filestream.close();
   }
   return comm;
 }
@@ -235,7 +243,8 @@ string LinuxParser::Ram(int pid) {
         }
       }
     }
-   }
+    filestream.close();
+  }
   return to_string(ram_l);
 }
 
@@ -254,7 +263,8 @@ string LinuxParser::Uid(int pid) {
         }
       }
     }
-   }
+    filestream.close();
+  }
   return uid;
 }
 
@@ -274,6 +284,7 @@ string LinuxParser::User(int pid) {
         }
       }
     }
+    filestream.close();
   }
   return name;
 }
@@ -301,6 +312,7 @@ long LinuxParser::UpTime(int pid) {
           }
         }
       }
+    filestream.close();
   }
   return upTime;
 }
